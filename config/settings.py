@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'core',
     'accounts.apps.AccountsConfig',
     'integration',
+    'catalog',
 
 ]
 
@@ -60,6 +61,14 @@ from datetime import timedelta
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}
+
+# Cache settings
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'catalog-cache',
+    }
 }
 
 MIDDLEWARE = [
@@ -138,3 +147,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+ERPNEXT_BASE_URL = os.getenv("ERPNEXT_BASE_URL", "http://localhost:8080").rstrip("/")
+ERPNEXT_API_KEY = os.getenv("ERPNEXT_API_KEY", "")
+ERPNEXT_API_SECRET = os.getenv("ERPNEXT_API_SECRET", "")
+ERPNEXT_TIMEOUT_SECONDS = int(os.getenv("ERPNEXT_TIMEOUT_SECONDS", "15"))
+
+CATALOG_CACHE_SECONDS = int(os.getenv("CATALOG_CACHE_SECONDS", "300"))
+STOCK_CACHE_SECONDS = int(os.getenv("STOCK_CACHE_SECONDS", "30"))
