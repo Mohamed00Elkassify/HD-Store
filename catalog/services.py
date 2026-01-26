@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
 from django.conf import settings
 from django.core.cache import cache
-from integration.erp_client import get_erp_client, ERPNextError
+from integration.erp_client import get_erp_client
 
 
 def _map_item_to_product(item: Dict[str, Any]) -> Dict[str, Any]:
@@ -103,6 +103,8 @@ def get_stock(item_code: str) -> Dict[str, Any]:
         "total_reserved_qty": total_reserved,
         "total_projected_qty": total_projected,
         "bins": bins,
+        # company decision: available = actual only
+        "available_qty": total_actual,
     }
 
     cache.set(cache_key, payload, timeout=settings.STOCK_CACHE_SECONDS)

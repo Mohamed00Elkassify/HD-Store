@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'integration',
     'catalog',
+    'cart.apps.CartConfig',
 
 ]
 
