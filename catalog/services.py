@@ -20,8 +20,17 @@ def _map_item_to_product(item: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def list_products(limit: int = 50) -> List[Dict[str, Any]]:
-    cache_key = f"catalog:products:limit={limit}"
+def list_products(limit: int = 20, offset: int = 0, q: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Fetch products from ERPNext Item.
+    Pagination:
+      - limit_page_length = limit
+      - limit_start = offset
+    Search:
+      - or_filters on item_name and item_code (LIKE)
+    """
+    q_norm = (q or "").strip()
+    cache_key = f"catalog:products:limit={limit}:offset={offset}:q={q_norm.lower()}"
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
@@ -29,10 +38,19 @@ def list_products(limit: int = 50) -> List[Dict[str, Any]]:
     client = get_erp_client()
 
     params = {
-        # add only fields you need for list view
         "fields": '["item_code","item_name","description","image","item_group","is_stock_item","disabled"]',
         "limit_page_length": str(limit),
+        "limit_start": str(offset),
     }
+
+    # ERPNext search using or_filters
+    if q_norm:
+        # LIKE search (contains)
+        params["or_filters"] = (
+            f'[["Item","item_name","like","%{q_norm}%"],'
+            f'["Item","item_code","like","%{q_norm}%"]]'
+        )
+
     data = client.request("GET", "/api/resource/Item", params=params)
     items = data.get("data", [])
     products = [_map_item_to_product(i) for i in items]

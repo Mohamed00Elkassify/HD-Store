@@ -16,7 +16,9 @@ def erp_error_response(e: Exception):
 
 
 class ProductsListParamsSerializer(serializers.Serializer):
-    limit = serializers.IntegerField(required=False, min_value=1, max_value=200, default=50)
+    limit = serializers.IntegerField(required=False, min_value=1, max_value=200, default=20)
+    offset = serializers.IntegerField(required=False, min_value=0, default=0)
+    q = serializers.CharField(required=False, allow_blank=True, max_length=80, default="")
 
 
 class ProductViewSet(viewsets.ViewSet):
@@ -33,9 +35,20 @@ class ProductViewSet(viewsets.ViewSet):
             params = ProductsListParamsSerializer(data=request.query_params)
             params.is_valid(raise_exception=True)
             limit = params.validated_data["limit"] # type: ignore
+            offset = params.validated_data["offset"] # type: ignore
+            q = params.validated_data["q"].strip() or None # type: ignore
 
-            products = list_products(limit=limit)
-            return Response({"count": len(products), "products": products})
+            products = list_products(limit=limit, offset=offset, q=q)
+
+            return Response(
+                {
+                    "count": len(products),
+                    "limit": limit,
+                    "offset": offset,
+                    "q": q or "",
+                    "products": products,
+                }
+            )
         except Exception as e:
             return erp_error_response(e)
 
