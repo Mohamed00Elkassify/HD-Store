@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'integration',
     'catalog',
     'cart.apps.CartConfig',
+    'orders',
 
 ]
 
@@ -154,6 +155,8 @@ ERPNEXT_BASE_URL = os.getenv("ERPNEXT_BASE_URL", "http://localhost:8080").rstrip
 ERPNEXT_API_KEY = os.getenv("ERPNEXT_API_KEY", "")
 ERPNEXT_API_SECRET = os.getenv("ERPNEXT_API_SECRET", "")
 ERPNEXT_TIMEOUT_SECONDS = int(os.getenv("ERPNEXT_TIMEOUT_SECONDS", "15"))
+ERPNEXT_DEFAULT_CUSTOMER = os.getenv("ERPNEXT_DEFAULT_CUSTOMER", "Online Customer")
+ERPNEXT_DEFAULT_WAREHOUSE = os.getenv("ERPNEXT_DEFAULT_WAREHOUSE")
 
 CATALOG_CACHE_SECONDS = int(os.getenv("CATALOG_CACHE_SECONDS", "300"))
 STOCK_CACHE_SECONDS = int(os.getenv("STOCK_CACHE_SECONDS", "30"))
