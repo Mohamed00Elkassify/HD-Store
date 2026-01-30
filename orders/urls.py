@@ -6,6 +6,7 @@ from .payment_views import (
     StaffMarkPaidView,
     StaffUpdateOrderStatusView,
 )
+from .staff_views import StaffOrdersListView, StaffOrderDetailView
 
 urlpatterns = [
     path("checkout/", CheckoutView.as_view()),
@@ -17,4 +18,7 @@ urlpatterns = [
 
     path("staff/orders/<int:order_id>/mark-paid/", StaffMarkPaidView.as_view()),
     path("staff/orders/<int:order_id>/status/", StaffUpdateOrderStatusView.as_view()),
+    
+    path("staff/orders/", StaffOrdersListView.as_view()),
+    path("staff/orders/<int:order_id>/", StaffOrderDetailView.as_view()),
 ]

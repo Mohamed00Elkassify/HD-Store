@@ -7,9 +7,12 @@ from .serializers import CheckoutSerializer, OrderSerializer
 from .services import checkout_cart_to_order, CheckoutError
 from .models import Order
 
+from rest_framework.throttling import ScopedRateThrottle
+from core.throttles import CheckoutRateThrottle
 
 class CheckoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = [CheckoutRateThrottle]
 
     def post(self, request):
         serializer = CheckoutSerializer(data=request.data)
@@ -47,3 +50,4 @@ class MyOrderDetailView(APIView):
             return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(OrderSerializer(order).data)
+

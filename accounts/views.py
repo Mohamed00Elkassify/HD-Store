@@ -7,6 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import RegisterSerializer, MeReadSerializer, MeUpdateSerializer
 
+from core.throttles import LoginRateThrottle
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -18,7 +19,7 @@ class RegisterView(APIView):
 
         user = serializer.save()
 
-        refresh = RefreshToken.for_user(user)
+        refresh = RefreshToken.for_user(user)  # type: ignore
         return Response(
             {
                 "message": "User registered successfully",
@@ -31,6 +32,7 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [LoginRateThrottle]
 
     def post(self, request):
         username = request.data.get("username")

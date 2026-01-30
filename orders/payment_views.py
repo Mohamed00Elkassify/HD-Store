@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from .models import Order, PaymentTransaction, VodafoneCashProof
 from .payment_serializers import VodafoneProofUploadSerializer, PaymentTransactionSerializer
 
+from .rules import can_transition
 
 class IsStaff(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -77,6 +78,12 @@ class StaffUpdateOrderStatusView(APIView):
         allowed = [s for s, _ in Order.Status.choices]
         if new_status not in allowed:
             return Response({"error": "Invalid status", "allowed": allowed}, status=400)
+        if not can_transition(order.status, new_status):
+            return Response(
+                {"error": "Invalid transition", "from": order.status, "to": new_status},
+                status=400
+            )
+        
 
         order.status = new_status
         order.save(update_fields=["status", "updated_at"])

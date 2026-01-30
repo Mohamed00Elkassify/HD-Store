@@ -56,6 +56,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "300/hour",
+        "anon": "60/hour",
+        "login": "10/min",
+        "checkout": "20/hour",
+    },
 }
 
 from datetime import timedelta
