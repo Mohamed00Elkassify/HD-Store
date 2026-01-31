@@ -116,6 +116,12 @@ All cart endpoints are handled by a CartViewSet:
 
 ---
 
+## Testing
+Run tests:
+```bash
+pytest -q
+```
+
 ## Notes / Business Rules
 
 - Stock validation uses ERPNext `actual_qty`.
