@@ -25,6 +25,7 @@ def create_erp_sales_order(
         "customer": customer,
         "delivery_date": delivery_date,
         "items": items_with_wh,
+        "po_no": "Online",  # Customer's Purchase Order - marks this as an online order
     }
     if default_wh:
         payload["set_warehouse"] = default_wh

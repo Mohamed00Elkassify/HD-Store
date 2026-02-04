@@ -83,7 +83,7 @@ def checkout_cart_to_order(*, user, checkout_data: dict) -> Order:
         so_name = (erp_resp.get("data") or {}).get("name")
 
     if so_name:
-        order.erp_sales_order_name = so_name
+        order.erp_sales_order_name = f"(Online) {so_name}"
         order.status = Order.Status.SYNCED
         order.save(update_fields=["erp_sales_order_name", "status", "updated_at"])
 
