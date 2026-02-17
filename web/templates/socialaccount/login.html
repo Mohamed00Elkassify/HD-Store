@@ -1,0 +1,39 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.common.loginWithGoogle }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-lg px-4 py-10 sm:px-6 lg:px-8">
+  <div class="rounded-lg border bg-card p-6 shadow-sm">
+    <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+      {{ provider.name }}
+    </div>
+    <h1 class="font-heading text-2xl font-bold">{{ t.common.loginWithGoogle }}</h1>
+    <p class="mt-2 text-sm text-muted-foreground">
+      You are about to sign in using your {{ provider.name }} account.
+    </p>
+
+    <form method="post" class="mt-6">
+      {% csrf_token %}
+      {% if process %}
+      <input type="hidden" name="process" value="{{ process }}">
+      {% endif %}
+      {% if next %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% endif %}
+
+      <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+        <img src="{% static 'web/images/g-logo.svg' %}" alt="Google" class="h-4 w-4 object-contain" loading="lazy">
+        <span>{{ t.common.loginWithGoogle }}</span>
+      </button>
+    </form>
+
+    <div class="mt-4 text-center">
+      <a href="{% url 'web:login' lang %}" class="text-sm font-medium text-muted-foreground hover:text-foreground">
+        {{ t.common.back }}
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

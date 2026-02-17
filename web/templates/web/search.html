@@ -1,0 +1,50 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.search.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mb-8 text-center">
+    <h1 class="font-heading text-3xl font-bold sm:text-4xl">{{ t.search.title }}</h1>
+  </div>
+
+  <!-- Search Bar -->
+  <form method="get" class="mx-auto mb-10 max-w-xl">
+    <div class="relative">
+      <i data-lucide="search" class="pointer-events-none absolute {% if is_rtl %}right-3{% else %}left-3{% endif %} top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground"></i>
+      <input type="text" name="q" value="{{ query }}" placeholder="{{ t.search.placeholder }}" autofocus
+             class="w-full rounded-lg border bg-background py-3 {% if is_rtl %}pr-10 pl-4{% else %}pl-10 pr-4{% endif %} text-sm shadow-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+      {% if query %}
+      <a href="{% url 'web:search' lang=lang %}"
+         class="absolute {% if is_rtl %}left-3{% else %}right-3{% endif %} top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+        <i data-lucide="x" class="h-4 w-4"></i>
+      </a>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if query %}
+    <!-- Results Count -->
+    <p class="mb-6 text-sm text-muted-foreground">
+      {{ t.search.results }}: <span class="font-semibold text-foreground">{{ products|length }}</span>
+      {% if query %} — "{{ query }}"{% endif %}
+    </p>
+
+    {% if products %}
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% for product in products %}
+          {% include "web/partials/_product_card.html" with product=product %}
+        {% endfor %}
+      </div>
+    {% else %}
+      {% include "web/partials/_empty_state.html" with icon="search-x" title=t.search.noResults description=t.search.noResultsDesc %}
+    {% endif %}
+  {% else %}
+    <div class="text-center text-muted-foreground">
+      <i data-lucide="search" class="mx-auto h-16 w-16 opacity-30"></i>
+      <p class="mt-4 text-sm">{{ t.search.hint }}</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

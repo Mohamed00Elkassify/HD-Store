@@ -5,3 +5,23 @@ __pycache__/
 *.pyc
 db.sqlite3
 notes.md
+
+# Mac OS metadata
+__MACOSX/
+.DS_Store
+
+# Frontend artifacts
+frontend_source/node_modules/
+frontend_source/.next/
+frontend_source/.git/
+frontend_source/assets(images and materials)/
+
+# Production files
+staticfiles/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

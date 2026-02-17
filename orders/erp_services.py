@@ -1,6 +1,10 @@
 from typing import Dict, Any, List
+import logging
+
 from django.conf import settings
-from integration.erp_client import get_erp_client
+from integration.erp_client import get_erp_client, ERPNextError
+
+logger = logging.getLogger(__name__)
 
 
 def create_erp_sales_order(
@@ -32,4 +36,19 @@ def create_erp_sales_order(
     if order_notes:
         payload["remarks"] = order_notes
 
-    return client.request("POST", "/api/resource/Sales Order", json={"data": payload})
+    resp = client.request("POST", "/api/resource/Sales Order", json={"data": payload})
+
+    # Auto-submit the Sales Order so it moves from Draft → Submitted
+    so_name = (resp.get("data") or {}).get("name")
+    if so_name:
+        try:
+            client.request(
+                "PUT",
+                f"/api/resource/Sales Order/{so_name}",
+                json={"data": {"docstatus": 1}},
+            )
+            logger.info("Sales Order %s auto-submitted", so_name)
+        except ERPNextError as exc:
+            logger.warning("Failed to auto-submit Sales Order %s: %s", so_name, exc)
+
+    return resp

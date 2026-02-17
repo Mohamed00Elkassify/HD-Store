@@ -1,0 +1,17 @@
+<!-- Empty State Component -->
+<div class="flex flex-col items-center justify-center py-16 text-center">
+  {% if icon %}
+  <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+    <i data-lucide="{{ icon }}" class="h-8 w-8 text-muted-foreground"></i>
+  </div>
+  {% endif %}
+  <h2 class="font-heading text-xl font-bold">{{ title }}</h2>
+  {% if description %}
+  <p class="mt-2 max-w-md text-sm text-muted-foreground">{{ description }}</p>
+  {% endif %}
+  {% if action_url %}
+  <a href="{{ action_url }}" class="mt-6 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+    {{ action_label }}
+  </a>
+  {% endif %}
+</div>

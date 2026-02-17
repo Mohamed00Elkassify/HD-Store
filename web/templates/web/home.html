@@ -1,0 +1,221 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}HD Store — {{ t.home.heroTitle }}{% endblock %}
+{% block meta_description %}{{ t.home.heroSubtitle }}{% endblock %}
+
+{% block extra_head %}
+<!-- Preload critical hero image for better performance -->
+<link rel="preload" href="{% static 'web/images/hero-banner.jpg' %}" as="image" type="image/jpeg">
+{% endblock %}
+
+{% block content %}
+<!-- ═══════════════ Hero Section ═══════════════ -->
+<section class="relative min-h-[520px] overflow-hidden sm:min-h-[580px] lg:min-h-[640px]">
+  <!-- Background -->
+  <div class="absolute inset-0 bg-gradient-to-br from-navy via-[#0a1832] to-[#030a18]">
+    <!-- Hero background image -->
+    <img src="{% static 'web/images/hero-banner.jpg' %}" 
+         alt="HD Store Hero" 
+         class="absolute inset-0 h-full w-full object-cover"
+         loading="eager"
+         decoding="sync"
+         fetchpriority="high">
+    <div class="absolute inset-0 bg-gradient-to-br from-navy/80 via-[#0a1832]/70 to-[#030a18]/80"></div>
+  </div>
+  <!-- Accent glow -->
+  <div class="absolute -top-32 {% if is_rtl %}right-1/4{% else %}left-1/4{% endif %} h-64 w-96 rounded-full bg-blue-500/15 blur-[120px]" aria-hidden="true"></div>
+  <div class="absolute -bottom-20 {% if is_rtl %}left-1/4{% else %}right-1/4{% endif %} h-48 w-72 rounded-full bg-blue-400/10 blur-[100px]" aria-hidden="true"></div>
+
+  <!-- Content -->
+  <div class="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-end px-4 pb-16 pt-24 sm:min-h-[580px] sm:px-6 lg:min-h-[640px] lg:justify-center lg:px-8 lg:pb-20">
+    <div class="max-w-2xl">
+      <!-- Badge -->
+      <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-4 py-1.5 backdrop-blur-sm">
+        <span class="relative flex h-2 w-2">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
+        </span>
+        <span class="text-xs font-medium text-blue-300">HD Store — Since 2008</span>
+      </div>
+
+      <h1 class="font-heading text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.5rem] xl:text-6xl">
+        <span class="bg-gradient-to-b from-white via-white to-blue-200/80 bg-clip-text text-transparent">
+          {{ t.home.heroTitle }}
+        </span>
+      </h1>
+      <p class="mt-5 max-w-lg text-base leading-relaxed text-blue-100/80 sm:text-lg">
+        {{ t.home.heroSubtitle }}
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <a href="{% url 'web:products' lang %}">
+          <button class="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40 hover:brightness-110">
+            {{ t.home.heroCta }}
+            <i data-lucide="arrow-right" class="h-4 w-4 {% if is_rtl %}rotate-180{% endif %}"></i>
+          </button>
+        </a>
+        <a href="{% url 'web:contact' lang %}">
+          <button class="inline-flex items-center justify-center gap-2 rounded-md border border-white/25 bg-white/10 px-6 py-3 text-sm font-medium text-white backdrop-blur-md transition-all hover:bg-white/20">
+            {{ t.home.contactCta }}
+            <i data-lucide="arrow-right" class="h-4 w-4 {% if is_rtl %}rotate-180{% endif %}"></i>
+          </button>
+        </a>
+        <a href="{% url 'web:offers' lang %}">
+          <button class="inline-flex items-center justify-center gap-1 rounded-md px-4 py-3 text-sm font-medium text-blue-300 transition-all hover:bg-blue-500/10 hover:text-blue-200">
+            {{ t.home.hotDeals }}
+            <i data-lucide="chevron-right" class="h-4 w-4 {% if is_rtl %}rotate-180{% endif %}"></i>
+          </button>
+        </a>
+      </div>
+    </div>
+
+    <!-- Floating Stats (desktop) -->
+    <div class="pointer-events-none absolute bottom-32 {% if is_rtl %}left-8{% else %}right-8{% endif %} hidden flex-col gap-3 lg:flex">
+      {% if lang == "ar" %}
+      {% with stats="17+:سنة خبرة,10K+:جهاز مُباع,5K+:عميل سعيد" %}
+      {% for stat in stats|make_list %}{% endfor %}
+      {% endwith %}
+      <div class="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-center backdrop-blur-md">
+        <p class="font-heading text-xl font-bold text-white">+17</p>
+        <p class="text-[11px] text-blue-200/60">سنة خبرة</p>
+      </div>
+      <div class="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-center backdrop-blur-md">
+        <p class="font-heading text-xl font-bold text-white">+10K</p>
+        <p class="text-[11px] text-blue-200/60">جهاز مُباع</p>
+      </div>
+      <div class="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-center backdrop-blur-md">
+        <p class="font-heading text-xl font-bold text-white">+5K</p>
+        <p class="text-[11px] text-blue-200/60">عميل سعيد</p>
+      </div>
+      {% else %}
+      <div class="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-center backdrop-blur-md">
+        <p class="font-heading text-xl font-bold text-white">+17</p>
+        <p class="text-[11px] text-blue-200/60">Years</p>
+      </div>
+      <div class="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-center backdrop-blur-md">
+        <p class="font-heading text-xl font-bold text-white">+10K</p>
+        <p class="text-[11px] text-blue-200/60">Sold</p>
+      </div>
+      <div class="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-center backdrop-blur-md">
+        <p class="font-heading text-xl font-bold text-white">+5K</p>
+        <p class="text-[11px] text-blue-200/60">Clients</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ Categories Section ═══════════════ -->
+<section class="relative -mt-12 z-10 py-4 sm:-mt-16 lg:-mt-20">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 lg:gap-4">
+      {% for cat in categories_data %}
+      <a href="{{ cat.url }}">
+        <div class="group relative overflow-hidden rounded-lg border border-border/50 bg-card/95 backdrop-blur-[1px] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
+          <div class="relative flex flex-col items-center gap-2.5 p-4 sm:p-5">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-muted/80 transition-all duration-300 group-hover:scale-110 sm:h-12 sm:w-12">
+              <i data-lucide="{{ cat.icon }}" class="h-5 w-5 {{ cat.iconColor }} sm:h-6 sm:w-6"></i>
+            </div>
+            <h3 class="font-heading text-xs font-bold sm:text-sm">{{ cat.title }}</h3>
+            <p class="line-clamp-2 text-center text-[10px] leading-tight text-muted-foreground sm:text-xs">{{ cat.desc }}</p>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ Why Us ═══════════════ -->
+<section class="py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h2 class="text-center font-heading text-2xl font-bold sm:text-3xl">{{ t.home.whyUs }}</h2>
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {% for why in why_us %}
+      <div class="rounded-lg border bg-card p-6 text-center shadow-sm">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <i data-lucide="{{ why.icon }}" class="h-6 w-6 text-primary"></i>
+        </div>
+        <h3 class="mt-3 font-heading text-sm font-bold">{{ why.title }}</h3>
+        <p class="mt-1 text-xs text-muted-foreground">{{ why.desc }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ Hot Deals ═══════════════ -->
+{% if hot_deals %}
+<section class="py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mb-8 flex items-center justify-between">
+      <h2 class="font-heading text-2xl font-bold">{{ t.home.hotDeals }}</h2>
+      <a href="{% url 'web:offers' lang %}" class="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent">
+        {{ t.common.viewAll }}
+        <i data-lucide="chevron-right" class="h-4 w-4 {% if is_rtl %}rotate-180{% endif %}"></i>
+      </a>
+    </div>
+    <div class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+      {% for product in hot_deals %}
+        {% include "web/partials/_product_card.html" with product=product %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════════ Best Sellers ═══════════════ -->
+{% if best_sellers %}
+<section class="bg-muted/30 py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mb-8 flex items-center justify-between">
+      <h2 class="font-heading text-2xl font-bold">{{ t.home.bestSellers }}</h2>
+      <a href="{% url 'web:products' lang %}" class="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent">
+        {{ t.common.viewAll }}
+        <i data-lucide="chevron-right" class="h-4 w-4 {% if is_rtl %}rotate-180{% endif %}"></i>
+      </a>
+    </div>
+    <div class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+      {% for product in best_sellers %}
+        {% include "web/partials/_product_card.html" with product=product %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════════ Shop by Brand ═══════════════ -->
+<section class="py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h2 class="mb-8 text-center font-heading text-2xl font-bold sm:text-3xl">{{ t.home.shopByBrand }}</h2>
+    <div class="grid grid-cols-3 gap-4 sm:gap-6">
+      {% for brand in brands %}
+      <a href="{% url 'web:products' lang %}?brand={{ brand.name }}">
+        <div class="group overflow-hidden rounded-lg border transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl">
+          <div class="flex flex-col items-center gap-4 p-6 sm:p-8">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted/50 p-2 transition-all duration-300 group-hover:scale-110 sm:h-20 sm:w-20 sm:p-3">
+              <img src="{{ brand.name|brand_logo }}" alt="{{ brand.name }}" class="h-12 w-12 object-contain sm:h-14 sm:w-14 dark:brightness-0 dark:invert">
+            </div>
+            <span class="font-heading text-sm font-bold transition-colors group-hover:text-primary sm:text-lg">{{ brand.name }}</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<section class="bg-primary py-12 text-primary-foreground sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+    <h2 class="font-heading text-2xl font-bold sm:text-3xl">{{ t.home.viewAllProducts }}</h2>
+    <p class="mt-2 text-primary-foreground/80">{{ t.home.featuredSubtitle }}</p>
+    <a href="{% url 'web:products' lang %}" class="mt-6 inline-flex items-center justify-center gap-2 rounded-md bg-secondary px-6 py-3 text-sm font-medium text-secondary-foreground shadow hover:bg-secondary/90">
+      {{ t.home.heroCta }}
+      <i data-lucide="arrow-right" class="h-4 w-4 {% if is_rtl %}rotate-180{% endif %}"></i>
+    </a>
+  </div>
+</section>
+{% endblock %}

@@ -75,6 +75,57 @@ class ERPNextClient:
 
         raise ERPNextError(f"Unexpected ERPNext error: {last_exc}")
 
+    def download_pdf(
+        self,
+        doctype: str,
+        name: str,
+        print_format: str = "Standard",
+    ) -> bytes:
+        """Download print-format PDF from ERPNext.
+
+        Returns raw PDF bytes.
+        """
+        url = (
+            f"{self.base_url}/api/method/"
+            f"frappe.utils.print_format.download_pdf"
+        )
+        params = {
+            "doctype": doctype,
+            "name": name,
+            "format": print_format,
+            "no_letterhead": "1",
+        }
+
+        last_exc: Optional[Exception] = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                r = requests.get(
+                    url,
+                    headers=self._headers(),
+                    params=params,
+                    timeout=self.timeout,
+                )
+
+                if r.status_code in (401, 403):
+                    raise ERPNextAuthError(f"{r.status_code} auth error: {r.text}")
+
+                if r.status_code == 404:
+                    raise ERPNextError(f"PDF not found for {doctype}/{name}")
+
+                if r.status_code >= 400:
+                    raise ERPNextError(f"{r.status_code} ERPNext PDF error: {r.text}")
+
+                return r.content
+
+            except (requests.Timeout, requests.ConnectionError) as e:
+                last_exc = e
+                if attempt < self.max_retries:
+                    time.sleep(self.backoff_seconds * (attempt + 1))
+                    continue
+                raise ERPNextUnavailable(f"ERPNext unavailable: {e}") from e
+
+        raise ERPNextError(f"Unexpected ERPNext PDF error: {last_exc}")
+
 
 def get_erp_client() -> ERPNextClient:
     if not settings.ERPNEXT_API_KEY or not settings.ERPNEXT_API_SECRET:

@@ -1,0 +1,44 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.faq.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mb-12 text-center">
+    <h1 class="font-heading text-3xl font-bold sm:text-4xl">{{ t.faq.title }}</h1>
+    <p class="mt-2 text-muted-foreground">{{ t.faq.subtitle }}</p>
+  </div>
+
+  <div class="space-y-4" x-data="{ open: null }">
+    {% for faq_item in faq_items %}
+    <div class="rounded-lg border bg-card shadow-sm">
+      <button @click="open = open === {{ forloop.counter }} ? null : {{ forloop.counter }}"
+              class="flex w-full items-center justify-between px-6 py-4 {% if is_rtl %}text-right{% else %}text-left{% endif %} font-medium transition hover:bg-muted/50">
+        <span class="text-sm font-semibold">{{ faq_item.q }}</span>
+        <i data-lucide="chevron-down"
+           class="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200"
+           :class="open === {{ forloop.counter }} ? 'rotate-180' : ''"></i>
+      </button>
+      <div x-show="open === {{ forloop.counter }}" x-collapse>
+        <div class="border-t px-6 py-4 text-sm leading-relaxed text-muted-foreground">
+          {{ faq_item.a }}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Contact CTA -->
+  <div class="mt-12 rounded-lg border bg-card p-8 text-center shadow-sm">
+    <i data-lucide="help-circle" class="mx-auto h-10 w-10 text-primary"></i>
+    <h2 class="mt-4 font-heading text-lg font-bold">{{ t.faq.moreQuestions }}</h2>
+    <p class="mt-2 text-sm text-muted-foreground">{{ t.faq.moreQuestionsDesc }}</p>
+    <a href="{{ whatsapp_link }}" target="_blank"
+       class="mt-4 inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2.5 text-sm font-medium text-white shadow transition hover:bg-green-700">
+      <i data-lucide="message-circle" class="h-4 w-4"></i>
+      {{ t.contact.chatNow }}
+    </a>
+  </div>
+</div>
+{% endblock %}

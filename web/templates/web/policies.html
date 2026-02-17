@@ -1,0 +1,45 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.policies.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mb-12 text-center">
+    <h1 class="font-heading text-3xl font-bold sm:text-4xl">{{ t.policies.title }}</h1>
+    <p class="mt-2 text-muted-foreground">{{ t.policies.subtitle }}</p>
+  </div>
+
+  <div class="space-y-6">
+    {% for section in policy_sections %}
+    <div class="rounded-lg border bg-card p-6 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+          <i data-lucide="{{ section.icon }}" class="h-5 w-5 text-primary"></i>
+        </div>
+        <h2 class="font-heading text-lg font-bold">{{ section.title }}</h2>
+      </div>
+      <ul class="mt-4 space-y-2">
+        {% for point in section.points %}
+        <li class="flex items-start gap-2 text-sm text-muted-foreground">
+          <i data-lucide="check-circle-2" class="mt-0.5 h-4 w-4 shrink-0 text-primary"></i>
+          <span>{{ point }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Contact -->
+  <div class="mt-12 rounded-lg border bg-card p-8 text-center shadow-sm">
+    <h2 class="font-heading text-lg font-bold">{{ t.policies.questions }}</h2>
+    <p class="mt-2 text-sm text-muted-foreground">{{ t.policies.questionsDesc }}</p>
+    <a href="{{ whatsapp_link }}" target="_blank"
+       class="mt-4 inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2.5 text-sm font-medium text-white shadow transition hover:bg-green-700">
+      <i data-lucide="message-circle" class="h-4 w-4"></i>
+      {{ t.contact.chatNow }}
+    </a>
+  </div>
+</div>
+{% endblock %}

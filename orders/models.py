@@ -22,7 +22,7 @@ class Order(models.Model):
         PAID = "PAID", "Paid"
         FAILED = "FAILED", "Failed"
 
-    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="orders")
+    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="orders", null=True, blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.CREATED)
 
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices)

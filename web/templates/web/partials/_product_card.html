@@ -1,0 +1,69 @@
+{% load web_tags %}
+<!-- Product Card -->
+<div class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-lg">
+  {% if product.tags %}
+  <div class="absolute {% if is_rtl %}right-2{% else %}left-2{% endif %} top-2 z-10 flex flex-col gap-1">
+    {% for tag in product.tags %}
+    <span class="inline-flex items-center rounded-full bg-primary px-2.5 py-0.5 text-xs font-medium text-primary-foreground">{{ tag }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if not product.inStock %}
+  <div class="absolute inset-0 z-10 flex items-center justify-center bg-background/80">
+    <span class="inline-flex items-center rounded-full bg-destructive px-3 py-1 text-sm font-medium text-white">{{ t.common.outOfStock }}</span>
+  </div>
+  {% endif %}
+
+  <a href="{% url 'web:product_detail' lang product.slug %}">
+    <div class="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+      {% if product.image_url %}
+      <img src="{{ product.image_url }}" alt="{{ product.name|loc:lang }}" class="h-full w-full object-contain p-2" loading="eager" decoding="async" fetchpriority="high">
+      {% else %}
+      <div class="flex h-full items-center justify-center">
+        <i data-lucide="laptop" class="h-16 w-16 text-muted-foreground/30"></i>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="space-y-3 p-4">
+      <!-- Brand + Grade -->
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-medium text-muted-foreground">{{ product.brand }}</span>
+        <span class="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">{{ t.common.grade }} {{ product.grade }}</span>
+      </div>
+
+      <!-- Name -->
+      <h3 class="line-clamp-2 text-sm font-semibold leading-tight">{{ product.name|loc:lang }}</h3>
+
+      <!-- Short Specs -->
+      <div class="space-y-0.5">
+        {% for spec in product.shortSpecs|loc:lang %}
+        <p class="line-clamp-1 text-xs text-muted-foreground">{{ spec }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Price -->
+      <div class="flex items-baseline gap-2">
+        <span class="text-lg font-bold text-primary">{{ product.priceEGP|price }}</span>
+        <span class="text-xs text-muted-foreground">{{ t.common.egp }}</span>
+        {% if product.oldPriceEGP %}
+        <span class="text-xs text-muted-foreground line-through">{{ product.oldPriceEGP|price }}</span>
+        {% endif %}
+      </div>
+    </div>
+  </a>
+
+  <!-- Add to Cart Button -->
+  <div class="px-4 pb-4">
+    <form method="post" action="{% url 'web:cart_add' lang %}">
+      {% csrf_token %}
+      <input type="hidden" name="item_code" value="{{ product.item_code }}">
+      <button type="submit" {% if not product.inStock %}disabled{% endif %}
+              class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">
+        <i data-lucide="shopping-cart" class="h-3.5 w-3.5"></i>
+        {{ t.common.orderNow }}
+      </button>
+    </form>
+  </div>
+</div>

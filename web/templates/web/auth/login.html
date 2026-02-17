@@ -1,0 +1,66 @@
+{% extends "web/base.html" %}
+{% load static web_tags socialaccount %}
+
+{% block title %}{{ t.common.login }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-md px-4 py-10 sm:px-6 lg:px-8">
+  <div class="rounded-lg border bg-card p-6 shadow-sm">
+    <h1 class="mb-2 font-heading text-2xl font-bold">{{ t.common.login }}</h1>
+    <p class="mb-6 text-sm text-muted-foreground">{{ t.common.loginSubtitle }}</p>
+
+    {% if form.non_field_errors %}
+    <div class="mb-4 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+      {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <form method="post" action="">
+      {% csrf_token %}
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+      {% endif %}
+
+      <div class="space-y-4">
+        <div>
+          <label for="id_login" class="text-sm font-medium">{{ t.common.emailOrUsername }}</label>
+          <input type="text" name="login" id="id_login" value="{{ form.login.value|default:'' }}"
+                 class="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring">
+          {% if form.login.errors %}
+          <p class="mt-1 text-xs text-destructive">{{ form.login.errors|striptags }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="id_password" class="text-sm font-medium">{{ t.common.password }}</label>
+          <input type="password" name="password" id="id_password"
+                 class="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring">
+          {% if form.password.errors %}
+          <p class="mt-1 text-xs text-destructive">{{ form.password.errors|striptags }}</p>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+          {{ t.common.login }}
+        </button>
+      </div>
+    </form>
+
+    <div class="my-6 flex items-center gap-3">
+      <div class="h-px flex-1 bg-border"></div>
+      <span class="text-xs text-muted-foreground">{{ t.common.or }}</span>
+      <div class="h-px flex-1 bg-border"></div>
+    </div>
+
+    <a href="{% provider_login_url 'google' %}" class="inline-flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2.5 text-sm font-medium shadow-sm hover:bg-accent">
+      <img src="{% static 'web/images/g-logo.svg' %}" alt="Google" class="h-4 w-4 object-contain" loading="lazy">
+      <span>{{ t.common.loginWithGoogle }}</span>
+    </a>
+
+    <p class="mt-6 text-center text-sm text-muted-foreground">
+      {{ t.common.noAccount }}
+      <a href="{% url 'web:register' lang %}" class="font-medium text-primary hover:underline">{{ t.common.register }}</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

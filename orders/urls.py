@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CheckoutView, MyOrdersView, MyOrderDetailView
+from .views import CheckoutView, MyOrdersView, MyOrderDetailView, ERPNextSalesInvoiceWebhook
 from .payment_views import (
     UploadVodafoneProofView,
     OrderPaymentsView,
@@ -12,6 +12,9 @@ urlpatterns = [
     path("checkout/", CheckoutView.as_view()),
     path("orders/", MyOrdersView.as_view()),
     path("orders/<int:order_id>/", MyOrderDetailView.as_view()),
+    
+    # ERPNext Webhooks
+    path("webhooks/erpnext/sales-invoice/", ERPNextSalesInvoiceWebhook.as_view()),
     
     path("orders/<int:order_id>/vodafone-proof/", UploadVodafoneProofView.as_view()),
     path("orders/<int:order_id>/payments/", OrderPaymentsView.as_view()),

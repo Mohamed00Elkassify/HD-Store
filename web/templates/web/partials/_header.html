@@ -1,0 +1,161 @@
+{% load static web_tags %}
+<!-- Sticky Header -->
+<header class="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+        x-data="{ mobileOpen: false, searchOpen: false, searchQuery: '' }">
+  <div class="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+
+    <!-- Logo -->
+    <a href="{% url 'web:home' lang %}" class="flex shrink-0 items-center gap-2">
+      <img src="{% static 'web/images/logo.png' %}" alt="HD Store" class="h-10 w-auto object-contain" width="120" height="40">
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden items-center gap-1 lg:flex">
+      <a href="{% url 'web:home' lang %}" class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">{{ t.nav.home }}</a>
+      <a href="{% url 'web:products' lang %}" class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">{{ t.nav.products }}</a>
+      <a href="{% url 'web:offers' lang %}" class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">{{ t.nav.offers }}</a>
+      <a href="{% url 'web:faq' lang %}" class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">{{ t.nav.faq }}</a>
+      <a href="{% url 'web:about' lang %}" class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">{{ t.nav.about }}</a>
+      <a href="{% url 'web:contact' lang %}" class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">{{ t.nav.contact }}</a>
+    </nav>
+
+    <!-- Spacer -->
+    <div class="flex-1"></div>
+
+    <!-- Desktop Search (autosuggest) -->
+    <div class="hidden w-64 lg:block" x-data="searchAutosuggest()" @click.outside="showResults = false">
+      <form action="{% url 'web:search' lang %}" method="get" class="relative">
+        <input type="text" name="q" x-model="query" @input.debounce.300ms="search()" @focus="if(results.length) showResults = true"
+               placeholder="{{ t.common.searchPlaceholder }}"
+               class="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+               autocomplete="off">
+        <!-- Results dropdown -->
+        <div x-show="showResults && results.length > 0" x-transition
+             class="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-auto rounded-md border bg-popover p-1 shadow-lg">
+          <template x-for="item in results" :key="item.slug">
+            <a :href="'{% url 'web:home' lang %}products/' + item.slug + '/'"
+               class="flex flex-col gap-0.5 rounded-sm px-2 py-1.5 text-sm hover:bg-accent"
+               @click="showResults = false">
+              <span class="font-medium" x-text="item.name"></span>
+              <span class="text-xs text-muted-foreground" x-text="item.brand + (item.item_group ? ' · ' + item.item_group : '')"></span>
+            </a>
+          </template>
+        </div>
+      </form>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="flex items-center gap-1">
+      {% if user.is_authenticated %}
+      <span class="hidden text-xs text-muted-foreground sm:inline">
+        {{ user.username }}
+      </span>
+      <a href="{% url 'web:logout' lang %}" class="inline-flex h-9 items-center justify-center rounded-md px-2 text-xs font-medium hover:bg-accent">
+        {{ t.common.logout }}
+      </a>
+      {% else %}
+      <a href="{% url 'web:login' lang %}" class="inline-flex h-9 items-center justify-center rounded-md px-2 text-xs font-medium hover:bg-accent">
+        {{ t.common.login }}
+      </a>
+      <a href="{% url 'web:register' lang %}" class="inline-flex h-9 items-center justify-center rounded-md px-2 text-xs font-medium hover:bg-accent">
+        {{ t.common.register }}
+      </a>
+      {% endif %}
+
+      <!-- Mobile search toggle -->
+      <button @click="searchOpen = !searchOpen" class="inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium hover:bg-accent lg:hidden" aria-label="Search">
+        <i data-lucide="search" class="h-4 w-4"></i>
+      </button>
+
+      <!-- Language switcher -->
+      <a href="{% url 'web:home' other_lang %}" class="inline-flex h-9 items-center justify-center rounded-md px-2 text-xs font-medium hover:bg-accent">
+        {{ other_lang_label }}
+      </a>
+
+      <!-- Theme toggle -->
+      <button @click="darkMode = !darkMode" class="inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium hover:bg-accent" aria-label="Toggle theme">
+        <i data-lucide="sun" class="h-4 w-4" x-show="darkMode" style="display:none"></i>
+        <i data-lucide="moon" class="h-4 w-4" x-show="!darkMode"></i>
+      </button>
+
+      <!-- Cart -->
+      <a href="{% url 'web:cart' lang %}" class="relative inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium hover:bg-accent" aria-label="{{ t.nav.cart }}">
+        <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+        {% if cart_count > 0 %}
+        <span class="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+          {% if cart_count > 9 %}9+{% else %}{{ cart_count }}{% endif %}
+        </span>
+        {% endif %}
+      </a>
+
+      <!-- Mobile hamburger menu -->
+      <button @click="mobileOpen = true" class="inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium hover:bg-accent lg:hidden" aria-label="Menu">
+        <i data-lucide="menu" class="h-4 w-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile search bar -->
+  <div x-show="searchOpen" x-transition class="border-t px-4 py-3 lg:hidden">
+    <form action="{% url 'web:search' lang %}" method="get" class="flex gap-2">
+      <input type="text" name="q" placeholder="{{ t.common.searchPlaceholder }}" class="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring" autofocus>
+      <button type="submit" class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+        <i data-lucide="search" class="h-4 w-4"></i>
+      </button>
+    </form>
+  </div>
+
+  <!-- Mobile side menu (overlay) -->
+  <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+       class="fixed inset-0 z-50 bg-black/50 lg:hidden" @click="mobileOpen = false" style="display:none">
+  </div>
+  <div x-show="mobileOpen"
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="{% if is_rtl %}translate-x-full{% else %}-translate-x-full{% endif %}"
+       x-transition:enter-end="translate-x-0"
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="translate-x-0"
+       x-transition:leave-end="{% if is_rtl %}translate-x-full{% else %}-translate-x-full{% endif %}"
+       class="fixed inset-y-0 {% if is_rtl %}right-0{% else %}left-0{% endif %} z-50 w-72 bg-background border-{% if is_rtl %}l{% else %}r{% endif %} shadow-xl lg:hidden"
+       style="display:none" @click.outside="mobileOpen = false">
+    <div class="flex flex-col gap-4 p-6 pt-8">
+      <div class="flex items-center justify-between">
+        <a href="{% url 'web:home' lang %}" class="flex items-center gap-2" @click="mobileOpen = false">
+          <img src="{% static 'web/images/logo.png' %}" alt="HD Store" class="h-8 w-auto object-contain" width="100" height="32">
+        </a>
+        <button @click="mobileOpen = false" class="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-accent">
+          <i data-lucide="x" class="h-4 w-4"></i>
+        </button>
+      </div>
+      <nav class="flex flex-col gap-1 mt-4">
+        <a href="{% url 'web:home' lang %}" class="rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent" @click="mobileOpen = false">{{ t.nav.home }}</a>
+        <a href="{% url 'web:products' lang %}" class="rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent" @click="mobileOpen = false">{{ t.nav.products }}</a>
+        <a href="{% url 'web:offers' lang %}" class="rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent" @click="mobileOpen = false">{{ t.nav.offers }}</a>
+        <a href="{% url 'web:faq' lang %}" class="rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent" @click="mobileOpen = false">{{ t.nav.faq }}</a>
+        <a href="{% url 'web:about' lang %}" class="rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent" @click="mobileOpen = false">{{ t.nav.about }}</a>
+        <a href="{% url 'web:contact' lang %}" class="rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent" @click="mobileOpen = false">{{ t.nav.contact }}</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+function searchAutosuggest() {
+  return {
+    query: '',
+    results: [],
+    showResults: false,
+    allProducts: {{ search_products_json|safe }},
+    search() {
+      if (this.query.length < 2) { this.results = []; this.showResults = false; return; }
+      const q = this.query.toLowerCase();
+      this.results = this.allProducts.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.brand.toLowerCase().includes(q) ||
+        (p.item_group || '').toLowerCase().includes(q)
+      ).slice(0, 5);
+      this.showResults = this.results.length > 0;
+    }
+  }
+}
+</script>

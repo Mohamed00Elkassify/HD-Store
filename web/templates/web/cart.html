@@ -1,0 +1,106 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.cart.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+  {% if not cart_items %}
+  {% include "web/partials/_empty_state.html" with icon="shopping-cart" title=t.cart.empty description=t.cart.emptyDesc action_label=t.cart.continueShopping action_url=products_url %}
+  {% else %}
+  <h1 class="mb-8 font-heading text-2xl font-bold sm:text-3xl">{{ t.cart.title }}</h1>
+
+  <div class="grid gap-8 lg:grid-cols-3">
+    <!-- Items -->
+    <div class="space-y-4 lg:col-span-2">
+      {% for item in cart_items %}
+      <div class="rounded-lg border bg-card shadow-sm">
+        <div class="flex gap-4 p-4">
+          <!-- Image placeholder -->
+          {% if item.product.image_url %}
+          <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-muted overflow-hidden">
+            <img src="{{ item.product.image_url }}" alt="{{ item.product.name|loc:lang }}" class="h-full w-full object-contain p-1">
+          </div>
+          {% else %}
+          <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-muted">
+            <i data-lucide="laptop" class="h-8 w-8 text-muted-foreground/40"></i>
+          </div>
+          {% endif %}
+
+          <div class="min-w-0 flex-1 space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <a href="{% url 'web:product_detail' lang item.product.slug %}" class="text-sm font-semibold hover:text-primary">
+                {{ item.product.name|loc:lang }}
+              </a>
+              <form method="post" action="{% url 'web:cart_remove' lang %}">
+                {% csrf_token %}
+                <input type="hidden" name="item_code" value="{{ item.product.item_code }}">
+                <button type="submit" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive" aria-label="{{ t.common.remove }}">
+                  <i data-lucide="trash-2" class="h-4 w-4"></i>
+                </button>
+              </form>
+            </div>
+
+            <p class="text-xs text-muted-foreground">{{ item.product.brand }}{% if item.product.grade %} — {{ t.common.grade }} {{ item.product.grade }}{% endif %}</p>
+
+            <div class="flex items-center justify-between">
+              <!-- Quantity controls -->
+              <div class="inline-flex items-center rounded-md border">
+                <form method="post" action="{% url 'web:cart_update' lang %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_code" value="{{ item.product.item_code }}">
+                  <input type="hidden" name="quantity" value="{{ item.quantity|add:"-1" }}">
+                  <button type="submit" class="inline-flex h-8 w-8 items-center justify-center text-sm hover:bg-accent" {% if item.quantity <= 1 %}disabled{% endif %}>
+                    <i data-lucide="minus" class="h-3 w-3"></i>
+                  </button>
+                </form>
+                <span class="inline-flex h-8 w-8 items-center justify-center border-x text-sm font-medium">{{ item.quantity }}</span>
+                <form method="post" action="{% url 'web:cart_update' lang %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_code" value="{{ item.product.item_code }}">
+                  <input type="hidden" name="quantity" value="{{ item.quantity|add:"1" }}">
+                  <button type="submit" class="inline-flex h-8 w-8 items-center justify-center text-sm hover:bg-accent">
+                    <i data-lucide="plus" class="h-3 w-3"></i>
+                  </button>
+                </form>
+              </div>
+
+              <span class="text-sm font-bold text-primary">{{ item.line_total|price }} {{ t.common.egp }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Summary -->
+    <div>
+      <div class="sticky top-20 rounded-lg border bg-card shadow-sm">
+        <div class="p-6">
+          <h2 class="font-heading text-lg font-bold">{{ t.cart.orderSummary }}</h2>
+        </div>
+        <div class="space-y-4 px-6 pb-6">
+          <div class="flex justify-between text-sm">
+            <span class="text-muted-foreground">{{ t.common.subtotal }}</span>
+            <span class="font-semibold">{{ cart_total|price }} {{ t.common.egp }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-muted-foreground">{{ t.common.shipping }}</span>
+            <span class="text-xs text-muted-foreground">{{ t.cart.shippingNote }}</span>
+          </div>
+          <hr class="border-border">
+          <div class="flex justify-between">
+            <span class="font-semibold">{{ t.common.total }}</span>
+            <span class="text-lg font-bold text-primary">{{ cart_total|price }} {{ t.common.egp }}</span>
+          </div>
+          <a href="{% url 'web:checkout' lang %}" class="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+            {{ t.cart.proceedCheckout }}
+            <i data-lucide="arrow-right" class="h-4 w-4 {% if is_rtl %}rotate-180{% endif %}"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

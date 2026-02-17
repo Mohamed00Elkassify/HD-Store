@@ -1,0 +1,225 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.products.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="font-heading text-2xl font-bold sm:text-3xl">{{ t.products.title }}</h1>
+    <p class="mt-1 text-sm text-muted-foreground">{{ t.products.subtitle }}</p>
+  </div>
+
+  <div class="flex gap-8" x-data="{ filtersOpen: false }">
+    <!-- Filters Sidebar -->
+    <!-- Mobile filter toggle -->
+    <button @click="filtersOpen = !filtersOpen" class="fixed bottom-20 {% if is_rtl %}left-4{% else %}right-4{% endif %} z-30 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-lg lg:hidden">
+      <i data-lucide="sliders-horizontal" class="h-4 w-4"></i>
+      <span x-text="filtersOpen ? '{{ t.common.hideFilters }}' : '{{ t.common.showFilters }}'"></span>
+    </button>
+
+    <aside class="w-64 shrink-0" :class="{ 'hidden lg:block': !filtersOpen, 'fixed inset-0 z-40 overflow-auto bg-background p-6 lg:relative lg:inset-auto lg:z-auto lg:bg-transparent lg:p-0': filtersOpen }">
+      <!-- Mobile close button -->
+      <div class="mb-4 flex items-center justify-between lg:hidden" x-show="filtersOpen">
+        <h3 class="font-heading text-lg font-bold">{{ t.common.filters }}</h3>
+        <button @click="filtersOpen = false" class="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-accent">
+          <i data-lucide="x" class="h-4 w-4"></i>
+        </button>
+      </div>
+
+      <form method="get" action="{% url 'web:products' lang %}" id="filter-form">
+        <div class="space-y-6">
+          <!-- Brand Filter -->
+          <div>
+            <h3 class="mb-3 font-heading text-sm font-bold">{{ t.products.filters.brand }}</h3>
+            <div class="space-y-2">
+              {% for b in filter_brands %}
+              <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="brand" value="{{ b }}" {% if b in active_brands %}checked{% endif %}
+                       class="h-4 w-4 rounded border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ b }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Grade Filter -->
+          <div>
+            <h3 class="mb-3 font-heading text-sm font-bold">{{ t.products.filters.grade }}</h3>
+            <div class="space-y-2">
+              {% for g in filter_grades %}
+              <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="grade" value="{{ g }}" {% if g in active_grades %}checked{% endif %}
+                       class="h-4 w-4 rounded border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ t.common.grade }} {{ g }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- RAM Filter -->
+          <div>
+            <h3 class="mb-3 font-heading text-sm font-bold">{{ t.products.filters.ram }}</h3>
+            <div class="space-y-2">
+              {% for r in filter_rams %}
+              <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="ram" value="{{ r }}" {% if r in active_rams %}checked{% endif %}
+                       class="h-4 w-4 rounded border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ r }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- CPU Filter -->
+          <div>
+            <h3 class="mb-3 font-heading text-sm font-bold">{{ t.products.filters.cpu }}</h3>
+            <div class="space-y-2">
+              {% for c in filter_cpus %}
+              <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="cpu" value="{{ c }}" {% if c in active_cpus %}checked{% endif %}
+                       class="h-4 w-4 rounded border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ c }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Screen Size Filter -->
+          <div>
+            <h3 class="mb-3 font-heading text-sm font-bold">{{ t.products.filters.screenSize }}</h3>
+            <div class="space-y-2">
+              {% for s in filter_screens %}
+              <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="screen" value="{{ s }}" {% if s in active_screens %}checked{% endif %}
+                       class="h-4 w-4 rounded border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ s }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Keyboard Layout -->
+          <div>
+            <h3 class="mb-3 font-heading text-sm font-bold">{{ t.products.filters.keyboard }}</h3>
+            <div class="space-y-2">
+              {% for k in filter_keyboards %}
+              <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="keyboard" value="{{ k }}" {% if k in active_keyboards %}checked{% endif %}
+                       class="h-4 w-4 rounded border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ k }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- In Stock Only -->
+          <div>
+            <label class="flex items-center gap-2 text-sm">
+              <input type="checkbox" name="in_stock" value="1" {% if active_in_stock %}checked{% endif %}
+                     class="h-4 w-4 rounded border-input" onchange="document.getElementById('filter-form').submit()">
+              {{ t.products.filters.inStockOnly }}
+            </label>
+          </div>
+
+          <!-- Charger Included -->
+          <div>
+            <label class="flex items-center gap-2 text-sm">
+              <input type="checkbox" name="charger" value="1" {% if active_charger %}checked{% endif %}
+                     class="h-4 w-4 rounded border-input" onchange="document.getElementById('filter-form').submit()">
+              {{ t.products.filters.charger }}
+            </label>
+          </div>
+
+          <!-- GPU Type -->
+          <div>
+            <h3 class="mb-3 font-heading text-sm font-bold">{{ t.products.filters.gpu }}</h3>
+            <div class="space-y-2">
+              <label class="flex items-center gap-2 text-sm">
+                <input type="radio" name="gpu_type" value="" {% if not active_gpu_type %}checked{% endif %}
+                       class="h-4 w-4 border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ t.common.viewAll }}
+              </label>
+              <label class="flex items-center gap-2 text-sm">
+                <input type="radio" name="gpu_type" value="Integrated" {% if active_gpu_type == "Integrated" %}checked{% endif %}
+                       class="h-4 w-4 border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ t.products.filters.integrated }}
+              </label>
+              <label class="flex items-center gap-2 text-sm">
+                <input type="radio" name="gpu_type" value="Dedicated" {% if active_gpu_type == "Dedicated" %}checked{% endif %}
+                       class="h-4 w-4 border-input" onchange="document.getElementById('filter-form').submit()">
+                {{ t.products.filters.dedicated }}
+              </label>
+            </div>
+          </div>
+
+          <!-- Sort (hidden, synced) -->
+          <input type="hidden" name="sort" value="{{ active_sort }}">
+
+          <!-- Clear All -->
+          {% if has_active_filters %}
+          <a href="{% url 'web:products' lang %}" class="inline-flex items-center gap-1 text-sm font-medium text-destructive hover:underline">
+            <i data-lucide="x" class="h-3 w-3"></i>
+            {{ t.common.clearAll }}
+          </a>
+          {% endif %}
+        </div>
+      </form>
+    </aside>
+
+    <!-- Products Grid -->
+    <div class="flex-1">
+      <!-- Sort & Count bar -->
+      <div class="mb-6 flex items-center justify-between">
+        <p class="text-sm text-muted-foreground">
+          {{ t.products.showing }} <span class="font-semibold text-foreground">{{ products|length }}</span> {{ t.products.of }} {{ total_count }} {{ t.products.laptops }}
+        </p>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-muted-foreground">{{ t.common.sort }}:</span>
+          <select onchange="const url = new URL(window.location); url.searchParams.set('sort', this.value); window.location = url;"
+                  class="rounded-md border border-input bg-background px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring">
+            <option value="newest" {% if active_sort == "newest" %}selected{% endif %}>{{ t.products.sort.newest }}</option>
+            <option value="price_asc" {% if active_sort == "price_asc" %}selected{% endif %}>{{ t.products.sort.priceLow }}</option>
+            <option value="price_desc" {% if active_sort == "price_desc" %}selected{% endif %}>{{ t.products.sort.priceHigh }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Active filter chips -->
+      {% if has_active_filters %}
+      <div class="mb-6 flex flex-wrap gap-2">
+        {% for b in active_brands %}
+        <span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">{{ b }}</span>
+        {% endfor %}
+        {% for g in active_grades %}
+        <span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Grade {{ g }}</span>
+        {% endfor %}
+        {% for r in active_rams %}
+        <span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">{{ r }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if products %}
+      <div class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
+        {% for product in products %}
+          {% include "web/partials/_product_card.html" with product=product %}
+        {% endfor %}
+      </div>
+
+      <!-- Load More (pagination) -->
+      {% if has_more %}
+      <div class="mt-8 text-center">
+        <a href="?{{ next_page_params }}" class="inline-flex items-center justify-center rounded-md border border-input bg-background px-6 py-2.5 text-sm font-medium shadow-sm hover:bg-accent">
+          {{ t.common.loadMore }}
+        </a>
+      </div>
+      {% endif %}
+      {% else %}
+      {% include "web/partials/_empty_state.html" with icon="search" title=t.common.noResults description=t.products.subtitle action_url="" %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

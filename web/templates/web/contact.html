@@ -1,0 +1,97 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.contact.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mb-12 text-center">
+    <h1 class="font-heading text-3xl font-bold sm:text-4xl">{{ t.contact.title }}</h1>
+    <p class="mt-2 text-muted-foreground">{{ t.contact.subtitle }}</p>
+  </div>
+
+  <!-- Info Cards — 3 columns -->
+  <div class="grid gap-6 sm:grid-cols-3">
+    <!-- Phone -->
+    <div class="rounded-lg border bg-card shadow-sm">
+      <div class="flex flex-col items-center gap-3 p-6 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+          <i data-lucide="phone" class="h-6 w-6 text-primary"></i>
+        </div>
+        <h3 class="font-heading text-sm font-bold">{{ t.contact.phone }}</h3>
+        <p class="text-sm text-muted-foreground" dir="ltr">{{ whatsapp_display }}</p>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="rounded-lg border bg-card shadow-sm">
+      <div class="flex flex-col items-center gap-3 p-6 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+          <i data-lucide="map-pin" class="h-6 w-6 text-primary"></i>
+        </div>
+        <h3 class="font-heading text-sm font-bold">{{ t.contact.location }}</h3>
+        <p class="text-sm text-muted-foreground">{{ t.contact.addressValue }}</p>
+      </div>
+    </div>
+
+    <!-- Working Hours -->
+    <div class="rounded-lg border bg-card shadow-sm">
+      <div class="flex flex-col items-center gap-3 p-6 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+          <i data-lucide="clock" class="h-6 w-6 text-primary"></i>
+        </div>
+        <h3 class="font-heading text-sm font-bold">{{ t.contact.hours }}</h3>
+        <p class="text-sm text-muted-foreground">{{ t.contact.hoursValue }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Buttons -->
+  <div class="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+    <a href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer"
+       class="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+      <i data-lucide="message-circle" class="h-5 w-5"></i>
+      {{ t.contact.chatWhatsApp }}
+    </a>
+    <a href="tel:{{ whatsapp_display }}"
+       class="inline-flex items-center gap-2 rounded-md border border-input bg-background px-6 py-3 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground">
+      <i data-lucide="phone" class="h-4 w-4"></i>
+      {{ t.contact.callNow }}
+    </a>
+  </div>
+
+  <!-- Google Maps -->
+  <div class="mt-12 overflow-hidden rounded-lg border bg-card shadow-sm">
+    <div class="relative">
+      <!-- Interactive Google Map Embed with marker -->
+      <iframe 
+        src="https://maps.google.com/maps?q=27.1809,31.1859&z=17&output=embed"
+        width="100%" 
+        height="400" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        class="w-full"
+        title="HD Store Location - Asyut, Egypt">
+      </iframe>
+      
+      <!-- Overlay with address and link to Google Maps -->
+      <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div class="text-white">
+            <p class="font-heading text-sm font-bold">{{ t.contact.findUs }}</p>
+            <p class="text-xs text-white/80">{{ t.contact.addressValue }}</p>
+          </div>
+          <a href="https://maps.app.goo.gl/x23ZCgcVHkcRcFp97" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             class="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow hover:bg-gray-100 transition-colors">
+            <i data-lucide="external-link" class="h-4 w-4"></i>
+            {{ t.contact.getDirections }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

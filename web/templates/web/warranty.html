@@ -1,0 +1,67 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.warranty.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mb-12 text-center">
+    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+      <i data-lucide="shield-check" class="h-8 w-8 text-primary"></i>
+    </div>
+    <h1 class="font-heading text-3xl font-bold sm:text-4xl">{{ t.warranty.title }}</h1>
+    <p class="mt-2 text-muted-foreground">{{ t.warranty.subtitle }}</p>
+  </div>
+
+  <!-- Warranty Coverage -->
+  <div class="space-y-6">
+    {% for section in warranty_sections %}
+    <div class="rounded-lg border bg-card p-6 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+          <i data-lucide="{{ section.icon }}" class="h-5 w-5 text-primary"></i>
+        </div>
+        <h2 class="font-heading text-lg font-bold">{{ section.title }}</h2>
+      </div>
+      <ul class="mt-4 space-y-2">
+        {% for point in section.points %}
+        <li class="flex items-start gap-2 text-sm text-muted-foreground">
+          <i data-lucide="check-circle-2" class="mt-0.5 h-4 w-4 shrink-0 text-primary"></i>
+          <span>{{ point }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Warranty Exclusions -->
+  <div class="mt-8 rounded-lg border border-orange-200 bg-orange-50 p-6 shadow-sm dark:border-orange-900/50 dark:bg-orange-950/20">
+    <div class="flex items-center gap-3">
+      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-orange-500/10">
+        <i data-lucide="alert-triangle" class="h-5 w-5 text-orange-600"></i>
+      </div>
+      <h2 class="font-heading text-lg font-bold text-orange-700 dark:text-orange-400">{{ t.warranty.exclusions }}</h2>
+    </div>
+    <ul class="mt-4 space-y-2">
+      {% for exc in warranty_exclusions %}
+      <li class="flex items-start gap-2 text-sm text-orange-700/80 dark:text-orange-300/80">
+        <i data-lucide="x-circle" class="mt-0.5 h-4 w-4 shrink-0"></i>
+        <span>{{ exc }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Contact -->
+  <div class="mt-12 rounded-lg border bg-card p-8 text-center shadow-sm">
+    <h2 class="font-heading text-lg font-bold">{{ t.warranty.claimTitle }}</h2>
+    <p class="mt-2 text-sm text-muted-foreground">{{ t.warranty.claimDesc }}</p>
+    <a href="{{ whatsapp_link }}" target="_blank"
+       class="mt-4 inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2.5 text-sm font-medium text-white shadow transition hover:bg-green-700">
+      <i data-lucide="message-circle" class="h-4 w-4"></i>
+      {{ t.contact.chatNow }}
+    </a>
+  </div>
+</div>
+{% endblock %}

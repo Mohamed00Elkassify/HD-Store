@@ -16,14 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include 
+from orders.webhooks import ERPNextSalesInvoiceWebhook
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('core.urls')),
-    path('api/', include('accounts.urls')),
-    path('api/', include('catalog.urls')),
-    path('api/', include('cart.urls')),
-    path("api/", include("orders.urls")),
+    path('accounts/', include('allauth.urls')),
+    # ERPNext webhook endpoint (production critical)
+    path('api/webhooks/erpnext/sales-invoice/', ERPNextSalesInvoiceWebhook.as_view(), name='erpnext-sales-invoice-webhook'),
+    # Web frontend (Django templates)
+    path('', include('web.urls')),
 ]
 
 from django.conf import settings

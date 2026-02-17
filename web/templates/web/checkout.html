@@ -1,0 +1,160 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.checkout.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+  {% if not cart_items and not order_submitted %}
+  {% include "web/partials/_empty_state.html" with icon="shopping-cart" title=t.cart.empty description=t.cart.emptyDesc action_label=t.cart.continueShopping action_url=products_url %}
+
+  {% elif order_submitted %}
+  <!-- Success State -->
+  <div class="mx-auto max-w-2xl py-16 text-center">
+    <i data-lucide="check-circle" class="h-16 w-16 text-primary mx-auto mb-6"></i>
+    <h1 class="font-heading text-3xl font-bold mb-8">{{ t.checkout.success.title }}</h1>
+
+    {% if erp_error %}
+    <div class="mb-8 p-4 text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-lg">
+      <i data-lucide="alert-triangle" class="inline h-4 w-4 mr-1"></i>
+      ERP sync issue: {{ erp_error }}
+    </div>
+    {% endif %}
+
+    <div class="space-y-4">
+      <a href="{% url 'web:products' lang %}" 
+         class="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-8 py-3 font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors">
+        <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+        {{ t.checkout.success.newOrder }}
+      </a>
+      
+      <div class="pt-4">
+        <a href="{% url 'web:home' lang %}" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- Checkout Form -->
+  <div class="mb-8">
+    <h1 class="font-heading text-2xl font-bold sm:text-3xl">{{ t.checkout.title }}</h1>
+    <p class="mt-1 text-sm text-muted-foreground">{{ t.checkout.subtitle }}</p>
+  </div>
+
+  <form method="post" action="{% url 'web:checkout' lang %}">
+    {% csrf_token %}
+    <div class="grid gap-8 lg:grid-cols-3">
+      <div class="space-y-6 lg:col-span-2">
+        <!-- COD badge -->
+        <div class="border bg-card p-4">
+          <div class="flex items-center gap-3">
+            <i data-lucide="banknote" class="h-5 w-5 text-primary"></i>
+            <div>
+              <p class="text-sm font-semibold">{{ t.checkout.cod }}</p>
+              <p class="text-xs text-muted-foreground">{{ t.checkout.codDesc }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form fields -->
+        <div class="border bg-card">
+          <div class="space-y-4 p-6">
+            <!-- Full Name -->
+            <div class="space-y-2">
+              <label for="id_full_name" class="text-sm font-medium">{{ t.checkout.form.fullName }} *</label>
+              <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default:'' }}"
+                     placeholder="{{ t.checkout.form.fullNamePlaceholder }}"
+                     class="w-full border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring {% if form.full_name.errors %}border-destructive{% endif %}">
+              {% if form.full_name.errors %}
+              <p class="text-xs text-destructive">{{ t.checkout.validation.nameMin }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Phone -->
+            <div class="space-y-2">
+              <label for="id_phone" class="text-sm font-medium">{{ t.checkout.form.phone }} *</label>
+              <input type="tel" name="phone" id="id_phone" value="{{ form.phone.value|default:'' }}" dir="ltr"
+                     placeholder="{{ t.checkout.form.phonePlaceholder }}"
+                     class="w-full border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring {% if form.phone.errors %}border-destructive{% endif %}">
+              {% if form.phone.errors %}
+              <p class="text-xs text-destructive">{{ t.checkout.validation.phoneInvalid }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Assiut Center -->
+            <div class="space-y-2">
+              <label for="id_assiut_center" class="text-sm font-medium">{{ t.checkout.form.assiutCenter }} *</label>
+              <select name="assiut_center" id="id_assiut_center"
+                      class="w-full border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring {% if form.assiut_center.errors %}border-destructive{% endif %}">
+                <option value="">{{ t.checkout.form.assiutCenterPlaceholder }}</option>
+                {% for center in centers %}
+                <option value="{{ center.value }}" {% if form.assiut_center.value == center.value %}selected{% endif %}>{{ center.label|loc:lang }}</option>
+                {% endfor %}
+              </select>
+              {% if form.assiut_center.errors %}
+              <p class="text-xs text-destructive">{{ t.checkout.validation.centerRequired }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Address Details -->
+            <div class="space-y-2">
+              <label for="id_address_details" class="text-sm font-medium">{{ t.checkout.form.addressDetails }} *</label>
+              <textarea name="address_details" id="id_address_details" rows="3"
+                        placeholder="{{ t.checkout.form.addressDetailsPlaceholder }}"
+                        class="w-full border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring {% if form.address_details.errors %}border-destructive{% endif %}">{{ form.address_details.value|default:'' }}</textarea>
+              {% if form.address_details.errors %}
+              <p class="text-xs text-destructive">{{ t.checkout.validation.addressMin }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Landmark -->
+            <div class="space-y-2">
+              <label for="id_landmark" class="text-sm font-medium">{{ t.checkout.form.landmark }}</label>
+              <input type="text" name="landmark" id="id_landmark" value="{{ form.landmark.value|default:'' }}"
+                     placeholder="{{ t.checkout.form.landmarkPlaceholder }}"
+                     class="w-full border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring">
+            </div>
+
+            <!-- Notes -->
+            <div class="space-y-2">
+              <label for="id_notes" class="text-sm font-medium">{{ t.checkout.form.notes }}</label>
+              <textarea name="notes" id="id_notes" rows="2"
+                        placeholder="{{ t.checkout.form.notesPlaceholder }}"
+                        class="w-full border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring">{{ form.notes.value|default:'' }}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary sidebar -->
+      <div>
+        <div class="sticky top-20 border bg-card">
+          <div class="border-b p-4">
+            <h2 class="font-heading text-lg font-bold">{{ t.cart.orderSummary }}</h2>
+          </div>
+          <div class="space-y-3 p-4">
+            {% for item in cart_items %}
+            <div class="flex items-center justify-between text-sm">
+              <span class="truncate {% if is_rtl %}ml-2{% else %}mr-2{% endif %}">{{ item.product.name|loc:lang }} &times; {{ item.quantity }}</span>
+              <span class="shrink-0 font-medium">{{ item.line_total|price }} {{ t.common.egp }}</span>
+            </div>
+            {% endfor %}
+            <hr class="border-border">
+            <div class="flex justify-between">
+              <span class="font-semibold">{{ t.common.total }}</span>
+              <span class="text-lg font-bold text-primary">{{ cart_total|price }} {{ t.common.egp }}</span>
+            </div>
+            <button type="submit" class="mt-2 w-full bg-primary text-primary-foreground px-4 py-3 text-sm font-medium hover:bg-primary/90 transition-colors">
+              {{ t.checkout.placeOrder }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

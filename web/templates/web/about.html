@@ -1,0 +1,70 @@
+{% extends "web/base.html" %}
+{% load static web_tags %}
+
+{% block title %}{{ t.about.title }} — HD Store{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="mb-12 text-center">
+    <h1 class="font-heading text-3xl font-bold sm:text-4xl">{{ t.about.title }}</h1>
+    <p class="mt-2 text-muted-foreground">{{ t.about.subtitle }}</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="mb-16 grid grid-cols-3 gap-6">
+    <div class="rounded-lg border bg-card p-6 text-center shadow-sm">
+      <p class="font-heading text-3xl font-bold text-primary">{{ t.about.stats.years }}</p>
+      <p class="mt-1 text-sm text-muted-foreground">{{ t.about.stats.yearsDesc }}</p>
+    </div>
+    <div class="rounded-lg border bg-card p-6 text-center shadow-sm">
+      <p class="font-heading text-3xl font-bold text-primary">{{ t.about.stats.laptops }}</p>
+      <p class="mt-1 text-sm text-muted-foreground">{{ t.about.stats.laptopsDesc }}</p>
+    </div>
+    <div class="rounded-lg border bg-card p-6 text-center shadow-sm">
+      <p class="font-heading text-3xl font-bold text-primary">{{ t.about.stats.customers }}</p>
+      <p class="mt-1 text-sm text-muted-foreground">{{ t.about.stats.customersDesc }}</p>
+    </div>
+  </div>
+
+  <!-- Story & Mission -->
+  <div class="grid gap-8 lg:grid-cols-2">
+    <div class="rounded-lg border bg-card p-8 shadow-sm">
+      <h2 class="font-heading text-xl font-bold">{{ t.about.story }}</h2>
+      <p class="mt-4 text-sm leading-relaxed text-muted-foreground">{{ t.about.storyText }}</p>
+    </div>
+    <div class="rounded-lg border bg-card p-8 shadow-sm">
+      <h2 class="font-heading text-xl font-bold">{{ t.about.mission }}</h2>
+      <p class="mt-4 text-sm leading-relaxed text-muted-foreground">{{ t.about.missionText }}</p>
+    </div>
+  </div>
+
+  <!-- Values -->
+  <div class="mt-12">
+    <h2 class="mb-8 text-center font-heading text-2xl font-bold">{{ t.about.values }}</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      <div class="rounded-lg border bg-card p-6 text-center shadow-sm">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <i data-lucide="badge-check" class="h-6 w-6 text-primary"></i>
+        </div>
+        <h3 class="mt-3 font-heading text-sm font-bold">{{ t.about.quality }}</h3>
+        <p class="mt-1 text-xs text-muted-foreground">{{ t.about.qualityDesc }}</p>
+      </div>
+      <div class="rounded-lg border bg-card p-6 text-center shadow-sm">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <i data-lucide="eye" class="h-6 w-6 text-primary"></i>
+        </div>
+        <h3 class="mt-3 font-heading text-sm font-bold">{{ t.about.transparency }}</h3>
+        <p class="mt-1 text-xs text-muted-foreground">{{ t.about.transparencyDesc }}</p>
+      </div>
+      <div class="rounded-lg border bg-card p-6 text-center shadow-sm">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <i data-lucide="headphones" class="h-6 w-6 text-primary"></i>
+        </div>
+        <h3 class="mt-3 font-heading text-sm font-bold">{{ t.about.support }}</h3>
+        <p class="mt-1 text-xs text-muted-foreground">{{ t.about.supportDesc }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
