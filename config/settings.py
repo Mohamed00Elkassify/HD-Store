@@ -233,7 +233,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Security settings for production
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    # Railway/Render/etc handle SSL at the proxy level.
+    # Tell Django to trust the X-Forwarded-Proto header from the proxy.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Do NOT redirect to HTTPS inside the container — the proxy already does it.
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
